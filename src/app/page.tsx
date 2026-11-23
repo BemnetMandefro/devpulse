@@ -3,11 +3,13 @@
 import { useState } from "react";
 import SearchBar from "@/components/SearchBar";
 import ProfileCard from "@/components/ProfileCard";
-import { fetchUser } from "@/lib/github";
-import { GitHubUser } from "@/types/github";
+import RepoList from "@/components/RepoList";
+import { fetchUser, fetchRepos } from "@/lib/github";
+import { GitHubUser, GitHubRepo } from "@/types/github";
 
 export default function Home() {
   const [user, setUser] = useState<GitHubUser | null>(null);
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,10 +18,15 @@ export default function Home() {
     setError(null);
 
     try {
-      const data = await fetchUser(username);
-      setUser(data);
+      const [userData, repoData] = await Promise.all([
+        fetchUser(username),
+        fetchRepos(username),
+      ]);
+      setUser(userData);
+      setRepos(repoData);
     } catch (err) {
       setUser(null);
+      setRepos([]);
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setLoading(false);
@@ -49,7 +56,12 @@ export default function Home() {
         </p>
       )}
 
-      {!loading && user && <ProfileCard user={user} />}
+      {!loading && user && (
+        <>
+          <ProfileCard user={user} />
+          <RepoList repos={repos} />
+        </>
+      )}
     </main>
   );
 }

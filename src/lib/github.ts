@@ -1,9 +1,9 @@
-import { GitHubUser } from "@/types/github";
+import { GitHubUser, GitHubRepo } from "@/types/github";
 
 const BASE_URL = "https://api.github.com";
 
-export async function fetchUser(username: string): Promise<GitHubUser> {
-  const res = await fetch(`${BASE_URL}/users/${encodeURIComponent(username)}`);
+async function request<T>(path: string): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`);
 
   if (res.status === 404) {
     throw new Error("User not found");
@@ -18,4 +18,14 @@ export async function fetchUser(username: string): Promise<GitHubUser> {
   }
 
   return res.json();
+}
+
+export function fetchUser(username: string): Promise<GitHubUser> {
+  return request<GitHubUser>(`/users/${encodeURIComponent(username)}`);
+}
+
+export function fetchRepos(username: string): Promise<GitHubRepo[]> {
+  return request<GitHubRepo[]>(
+    `/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`
+  );
 }
