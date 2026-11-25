@@ -5,8 +5,10 @@ import { Search } from "lucide-react";
 
 export default function SearchBar({
   onSearch,
+  placeholder = "Search for a GitHub username...",
 }: {
   onSearch: (username: string) => void;
+  placeholder?: string;
 }) {
   const [value, setValue] = useState("");
 
@@ -17,19 +19,22 @@ export default function SearchBar({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-md gap-2">
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full max-w-xl overflow-hidden rounded-xl border border-border bg-card focus-within:border-accent"
+    >
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+        <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted" />
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Search a GitHub username..."
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2 pl-9 pr-3 text-sm text-slate-100 outline-none focus:border-indigo-500"
+          placeholder={placeholder}
+          className="w-full bg-transparent py-3 pl-11 pr-3 text-sm text-foreground outline-none placeholder:text-muted"
         />
       </div>
       <button
         type="submit"
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+        className="bg-accent px-6 text-sm font-semibold text-background hover:opacity-90"
       >
         Search
       </button>

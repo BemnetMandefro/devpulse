@@ -3,6 +3,7 @@ export interface GitHubUser {
   name: string | null;
   avatar_url: string;
   bio: string | null;
+  location?: string | null;
   followers: number;
   following: number;
   public_repos: number;
@@ -15,6 +16,7 @@ export interface GitHubRepo {
   description: string | null;
   html_url: string;
   stargazers_count: number;
+  forks_count: number;
   language: string | null;
   updated_at: string;
 }
