@@ -34,7 +34,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center gap-8 bg-slate-950 px-4 py-16">
+    <main className="flex flex-col items-center gap-8 px-4 py-16">
       <header className="text-center">
         <h1 className="text-4xl font-bold text-slate-100">DevPulse</h1>
         <p className="mt-2 text-slate-400">Explore any GitHub profile.</p>
