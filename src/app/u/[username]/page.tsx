@@ -2,10 +2,12 @@
 
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExternalLink, GitFork, MapPin, Star } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import { fetchRepos, fetchUser } from "@/lib/github";
+import { addToHistory } from "@/lib/history";
 import { GitHubRepo, GitHubUser } from "@/types/github";
 
 function ProfileView({ username }: { username: string }) {
@@ -23,6 +25,7 @@ function ProfileView({ username }: { username: string }) {
         if (cancelled) return;
         setUser(userData);
         setRepos(repoData);
+        addToHistory(userData.login);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -51,7 +54,9 @@ function ProfileView({ username }: { username: string }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
-      <SearchBar onSearch={(name) => router.push(`/u/${encodeURIComponent(name)}`)} />
+      <SearchBar
+        onSearch={(name) => router.push(`/u/${encodeURIComponent(name)}`)}
+      />
 
       {loading && <p className="mt-10 text-sm text-muted">Loading...</p>}
 
@@ -114,9 +119,17 @@ function ProfileView({ username }: { username: string }) {
           </section>
 
           <section className="mt-10">
-            <h2 className="text-xl font-semibold text-foreground">
-              Popular Repositories
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-foreground">
+                Popular Repositories
+              </h2>
+              <Link
+                href={`/u/${username}/repos`}
+                className="text-sm text-accent hover:underline"
+              >
+                View all →
+              </Link>
+            </div>
 
             {popular.length === 0 ? (
               <p className="mt-4 text-sm text-muted">No public repositories.</p>

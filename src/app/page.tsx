@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { History, Trash2 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import { fetchUser } from "@/lib/github";
+import {
+  clearHistory,
+  getHistorySnapshot,
+  getServerSnapshot,
+  subscribe,
+} from "@/lib/history";
 import { mockUser } from "@/data/mock";
 import { GitHubUser } from "@/types/github";
 
@@ -14,6 +21,11 @@ const compact = new Intl.NumberFormat("en", { notation: "compact" });
 export default function Home() {
   const router = useRouter();
   const [featured, setFeatured] = useState<GitHubUser>(mockUser);
+  const recent = useSyncExternalStore(
+    subscribe,
+    getHistorySnapshot,
+    getServerSnapshot
+  );
 
   useEffect(() => {
     fetchUser("octocat")
@@ -89,6 +101,36 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {recent.length > 0 && (
+        <section className="mt-10 max-w-3xl">
+          <div className="flex items-center justify-between">
+            <h2 className="flex items-center gap-2 font-semibold text-foreground">
+              <History className="size-4 text-muted" />
+              Recent Searches
+            </h2>
+            <button
+              onClick={clearHistory}
+              className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground"
+            >
+              <Trash2 className="size-4" />
+              Clear History
+            </button>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {recent.map((name) => (
+              <Link
+                key={name}
+                href={`/u/${name}`}
+                className="rounded-full border border-border bg-card px-4 py-1.5 text-sm text-foreground hover:border-accent"
+              >
+                {name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
